@@ -1,5 +1,8 @@
 name: 'SLS Deploy Microservices'
 description: 'Useful for deploying microservices AWSLambda functions in a monorepo with Serverless Framework.'
+branding:
+  icon: 'package'
+  color: 'purple'
 inputs:
   current_app:
     description: 'AWSLambda function to deploy'
