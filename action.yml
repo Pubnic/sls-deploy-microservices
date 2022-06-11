@@ -1,0 +1,39 @@
+name: 'SLS Deploy Microservices'
+description: 'Useful for deploying microservices AWSLambda functions in a monorepo with Serverless Framework.'
+inputs:
+  current_app:
+    description: 'AWSLambda function to deploy'
+    required: true
+  environment:
+    description: 'environment to deploy'
+    required: true
+  aws_access_key_id:
+    description: 'AWS access key id'
+    required: true
+  aws_secret_access_key:
+    description: 'AWS secret access key'
+    required: true
+  aws_region:
+    description: 'AWS region'
+    required: false
+    default: 'us-east-1'
+  serverless_version:
+    description: 'Serverless version'
+    required: false
+    default: 'latest'
+  use_ci:
+    description: 'Use npm ci'
+    required: false
+    default: false
+runs:
+  using: "composite"
+  steps:
+    - run: |
+        export CURRENT_APP=${{ inputs.current_app }}
+        export ENVIRONMENT=${{ inputs.environment }}
+        export AWS_DEFAULT_REGION=${{ inputs.aws_region }}
+        npm i -g serverless@${{ inputs.serverless_version }}
+        [[ ${{ inputs.use_ci }} == true ]] && npm ci || npm install
+        sls config credentials --provider aws --key ${{ inputs.aws_access_key_id }} --secret ${{ inputs.aws_secret_access_key }} --stage ${{ inputs.environment }}
+        sls deploy --stage ${{ inputs.environment }}
+      shell: bash
