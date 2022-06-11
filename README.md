@@ -10,7 +10,7 @@ Useful for deploying microservices AWSLambda functions in a monorepo with Server
 - **\*aws_secret_access_key:** The AWS secret access key.
 - **aws_region:** The AWS region. **default: us-east-1**
 - **serverless_version:** The Serverless Framework version. **default: latest**
-- **use_ci:** Use npm ci. **default: false** (If true, you must have a package-lock.json file in the root of the project.)
+- **use_ci:** Use npm ci. **default: "false"** (If true, you must have a package-lock.json file in the root of the project.)
 
 
 **You can also add your own environment variables to be used in the deployment by Serverless Framework.**
@@ -31,7 +31,7 @@ environment:
     aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     aws_region: ${{ secrets.AWS_DEFAULT_REGION }}
     serverless_version: 3.19.0
-    use_ci: true
+    use_ci: "true"
   env:
     LISTENER_ARN: ${{ secrets.LISTENER_ARN }}
 ```
@@ -45,14 +45,14 @@ environment:
 
 ## serverless.yml example with alb
 ```yml
-service: ${env:CURRENT_APP}-pubnic-${env:ENVIRONMENT}
+service: pubnic
 provider:
   name: aws
   stackName: ${env:CURRENT_APP}-pubnic-${env:ENVIRONMENT}
   runtime: python3.9
   region: sa-east-1
   memorySize: 128
-  timeout: 60
+  timeout: 30
 
 functions:
   microservices:
@@ -86,6 +86,7 @@ custom:
     slim: true
     strip: false
     dockerizePip: non-linux
+    dockerImage: public.ecr.aws/sam/build-python3.9:latest
     layer:
       name: ${sls:stage}-pubnic
       description: Pubnic Dependencies

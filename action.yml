@@ -27,7 +27,7 @@ inputs:
   use_ci:
     description: 'Use npm ci'
     required: false
-    default: false
+    default: "false"
 runs:
   using: "composite"
   steps:
@@ -36,7 +36,7 @@ runs:
         export ENVIRONMENT=${{ inputs.environment }}
         export AWS_DEFAULT_REGION=${{ inputs.aws_region }}
         npm i -g serverless@${{ inputs.serverless_version }}
-        [[ ${{ inputs.use_ci }} == true ]] && npm ci || npm install
+        [[ ${{ inputs.use_ci }} == "true" ]] && npm ci || npm install
         sls config credentials --provider aws --key ${{ inputs.aws_access_key_id }} --secret ${{ inputs.aws_secret_access_key }} --stage ${{ inputs.environment }}
         sls deploy --stage ${{ inputs.environment }}
       shell: bash
