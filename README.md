@@ -4,11 +4,10 @@ Useful for deploying microservices AWSLambda functions in a monorepo with Server
 
 ## Variables
 
-- **\*current_app:** The AWSLambda function name to deploy. **Should be the same as the folder name**
-- **\*environment:** The environment to deploy to.
 - **\*aws_access_key_id:** The AWS access key ID.
 - **\*aws_secret_access_key:** The AWS secret access key.
 - **aws_region:** The AWS region. **default: us-east-1**
+- **stage:** The stage to deploy to. **default: development**
 - **serverless_version:** The Serverless Framework version. **default: latest**
 - **use_ci:** Use npm ci. **default: "false"** (If true, you must have a package-lock.json file in the root of the project.)
 
@@ -25,14 +24,15 @@ environment:
 - name: Deploy
   uses: Pubnic/sls-deploy-microservices@v1
   with:
-    current_app: users
-    environment: production
+    stage: production
     aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
     aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     aws_region: ${{ secrets.AWS_DEFAULT_REGION }}
     serverless_version: 3.19.0
     use_ci: "true"
   env:
+    ENVIRONMENT: production
+    CURRENT_APP: users
     LISTENER_ARN: ${{ secrets.LISTENER_ARN }}
 ```
 

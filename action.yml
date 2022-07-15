@@ -4,12 +4,6 @@ branding:
   icon: 'package'
   color: 'purple'
 inputs:
-  current_app:
-    description: 'AWSLambda function to deploy'
-    required: true
-  environment:
-    description: 'environment to deploy'
-    required: true
   aws_access_key_id:
     description: 'AWS access key id'
     required: true
@@ -20,6 +14,10 @@ inputs:
     description: 'AWS region'
     required: false
     default: 'us-east-1'
+  stage:
+    description: 'stage to deploy'
+    required: false
+    default: 'development'
   serverless_version:
     description: 'Serverless version'
     required: false
@@ -32,11 +30,9 @@ runs:
   using: "composite"
   steps:
     - run: |
-        export CURRENT_APP=${{ inputs.current_app }}
-        export ENVIRONMENT=${{ inputs.environment }}
         export AWS_DEFAULT_REGION=${{ inputs.aws_region }}
         npm i -g serverless@${{ inputs.serverless_version }}
         [[ ${{ inputs.use_ci }} == "true" ]] && npm ci || npm install
         sls config credentials --provider aws --key ${{ inputs.aws_access_key_id }} --secret ${{ inputs.aws_secret_access_key }}
-        sls deploy --stage ${{ inputs.environment }}
+        sls deploy --stage ${{ inputs.stage }}
       shell: bash
