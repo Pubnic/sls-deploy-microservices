@@ -22,7 +22,7 @@ environment:
 
 ```yml
 - name: Deploy
-  uses: Pubnic/sls-deploy-microservices@v1
+  uses: Pubnic/sls-deploy-microservices@v0.1.1
   with:
     stage: production
     aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -45,10 +45,10 @@ environment:
 
 ## serverless.yml example with alb
 ```yml
-service: pubnic
+service: ${env:CURRENT_APP}-api
 provider:
   name: aws
-  stackName: ${env:CURRENT_APP}-pubnic-${env:ENVIRONMENT}
+  stackName: ${env:CURRENT_APP}-pubnic-${sls:stage}
   runtime: python3.9
   region: sa-east-1
   memorySize: 128
@@ -56,12 +56,11 @@ provider:
 
 functions:
   microservices:
-    name: ${env:CURRENT_APP}-pubnic-${env:ENVIRONMENT}
+    name: ${env:CURRENT_APP}-pubnic-${sls:stage}
     handler: app.handler
     layers:
       - Ref: PythonRequirementsLambdaLayer
     environment:
-      PYTHONPATH: /src
       ENVIRONMENT: ${env:ENVIRONMENT}
       CURRENT_APP: ${env:CURRENT_APP}
     events:
@@ -70,7 +69,7 @@ functions:
           priority: ${self:custom.albPriority.${env:CURRENT_APP}}
           multiValueHeaders: true
           conditions:
-            host: api.pubnic.app
+            host: api.pubnic.com.br
             path: /${env:CURRENT_APP}/*
 
 package:
@@ -137,6 +136,9 @@ plugins:
 ## FastAPI example
 
 ### APP
+
+- path: `app.py`
+
 ```python
 from fastapi import FastAPI
 from mangum import Mangum
@@ -162,7 +164,7 @@ handler = Mangum(app, lifespan='on')
 
 You can have one app with multiples AWSLambda functions.
 
-- path: `src/users/views.py`
+- path: `users/views.py`
 
 ```python
 from fastapi import APIRouter
@@ -176,7 +178,7 @@ async def status():
     return {'status': 'OK'}
 ```
 
-- path: `src/routers.py`
+- path: `routers.py`
 
 ```python
 import os
